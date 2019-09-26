@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  sources-server:
+    container_name: sources_api
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+        - 3000:3000
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST-sources-db}
+      - DATABASE_PORT=${DATABASE_PORT-5432}
+      - DATABASE_USER=${DATABASE_USER-postgres}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD-postgres}
+
+    links:
+      - sources-db
+      - zookeeper
+      - kafka
+    depends_on:
+      - sources-db
+      - zookeeper
+      - kafka
+
+  sources-db:
+    container_name: sources_db
+    image: postgres:9.6
+    environment:
+    - POSTGRES_DB=${DATABASE_NAME-sources}
+    - POSTGRES_USER=${DATABASE_USER-postgres}
+    - POSTGRES_PASSWORD=${DATABASE_PASSWORD-postgres}
+    ports:
+      - "15436:5432"
+    volumes:
+      - ./pg_data:/var/lib/pgsql/data
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+      - ZOOKEEPER_SERVER_ID=1
+
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - 29092:29092
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+
+
+networks:
+  default:
+    external:
+      name: sources-client-network
+
