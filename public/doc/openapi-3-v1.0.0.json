@@ -1257,6 +1257,15 @@
                 "properties": {
                   "tenant_id": {
                     "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  },
+                  "storage_account": {
+                    "type": "string"
+                  },
+                  "resource_group": {
+                    "type": "string"
                   }
                 },
                 "type": "object"

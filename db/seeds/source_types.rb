@@ -64,10 +64,13 @@ update_or_create(
 azure_json_schema = {
   :authentication => [{
     :type   => 'tenant_id_client_id_client_secret',
-    :name   => "Tenant ID, Client ID, Client Secret",
+    :name   => "Tenant ID, Client ID, Client Secret, Subscription ID, Storage Account, Resource Group",
     :fields => [
       {:component => "text-field", :name => "authentication.authtype", :hideField => true, :initialValue => "tenant_id_client_id_client_secret"},
       {:component => "text-field", :name => "authentication.extra.azure.tenant_id", :label => "Tenant ID"},
+      {:component => "text-field", :name => "authentication.extra.azure.subscription_id", :label => "Subscription ID"},
+      {:component => "text-field", :name => "authentication.extra.azure.storage_account", :label => "Storage Account"},
+      {:component => "text-field", :name => "authentication.extra.azure.resource_group", :label => "Resource Group"},
       {:component => "text-field", :name => "authentication.username", :label => "Client ID"},
       {:component => "text-field", :name => "authentication.password", :label => "Client Secret", :type => "password"}
     ]
