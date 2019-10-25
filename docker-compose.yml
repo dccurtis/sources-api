@@ -1,28 +1,6 @@
 version: '3'
 
 services:
-  sources-server:
-    container_name: sources_api
-    build:
-        context: .
-        dockerfile: Dockerfile
-    ports:
-        - 3000:3000
-    environment:
-      - DATABASE_HOST=${DATABASE_HOST-sources-db}
-      - DATABASE_PORT=${DATABASE_PORT-5432}
-      - DATABASE_USER=${DATABASE_USER-postgres}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD-postgres}
-
-    links:
-      - sources-db
-      - zookeeper
-      - kafka
-    depends_on:
-      - sources-db
-      - zookeeper
-      - kafka
-
   sources-db:
     container_name: sources_db
     image: postgres:9.6
