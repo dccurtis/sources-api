@@ -79,7 +79,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "Invalid parameter - Validation failed: Name can't be blank").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "Invalid parameter - Validation failed: Name can't be blank").to_h
         )
       end
 
@@ -89,7 +89,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Source does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Source does not define properties: aaa").to_h
         )
       end
 
@@ -99,7 +99,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "Invalid parameter - Validation failed: Name can't be blank").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "Invalid parameter - Validation failed: Name can't be blank").to_h
         )
       end
 
@@ -109,7 +109,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotNullError: #/components/schemas/Source/properties/name does not allow null values").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotNullError: #/components/schemas/Source/properties/name does not allow null values").to_h
         )
       end
 
@@ -119,7 +119,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::InvalidPattern: #/components/schemas/ID pattern ^\\d+$ does not match value: xxx").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::InvalidPattern: #/components/schemas/ID pattern ^\\d+$ does not match value: xxx").to_h
         )
       end
 
@@ -132,7 +132,7 @@ RSpec.describe("v3.0 - Sources") do
           :status      => 400,
           :location    => nil,
           :parsed_body => Insights::API::Common::ErrorDocument.new.add(
-            400, "Invalid parameter - Validation failed: Name has already been taken").to_h
+            "400", "Invalid parameter - Validation failed: Name has already been taken").to_h
         )
       end
 
@@ -157,7 +157,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "Record not unique").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "Record not unique").to_h
         )
       end
 
@@ -201,7 +201,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
     end
@@ -229,7 +229,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status => 400,
-          :parsed_body => {"errors"=>[{"detail"=>"OpenAPIParser::NotNullError: #/components/schemas/Source/properties/name does not allow null values", "status"=>400}]}
+          :parsed_body => {"errors"=>[{"detail"=>"OpenAPIParser::NotNullError: #/components/schemas/Source/properties/name does not allow null values", "status"=>"400"}]}
         )
 
         expect(instance.reload).to have_attributes(:name => "my source")
@@ -243,7 +243,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
 
@@ -255,7 +255,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status => 400,
-          :parsed_body => {"errors" => [{"detail" => "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Source does not define properties: aaaaa", "status" => 400}]}
+          :parsed_body => {"errors" => [{"detail" => "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Source does not define properties: aaaaa", "status" => "400"}]}
         )
       end
 
@@ -267,7 +267,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status => 400,
-          :parsed_body => {"errors" => [{"detail" => "ActionController::UnpermittedParameters: found unpermitted parameter: :uid", "status" => 400}]}
+          :parsed_body => {"errors" => [{"detail" => "ActionController::UnpermittedParameters: found unpermitted parameter: :uid", "status" => "400"}]}
         )
       end
 
@@ -277,7 +277,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::ValidateError: #/components/schemas/ID expected string, but received Integer: 4").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::ValidateError: #/components/schemas/ID expected string, but received Integer: 4").to_h
         )
       end
 
@@ -287,7 +287,7 @@ RSpec.describe("v3.0 - Sources") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "Invalid parameter - Validation failed: Availability status is not included in the list").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "Invalid parameter - Validation failed: Availability status is not included in the list").to_h
         )
       end
 
@@ -335,8 +335,62 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status      => 400,
-          :parsed_body => { "errors" => [{"detail" => "ActionController::UnpermittedParameters: found unpermitted parameter: :created_at", "status" => 400 }]}
+          :parsed_body => { "errors" => [{"detail" => "ActionController::UnpermittedParameters: found unpermitted parameter: :created_at", "status" => "400" }]}
         )
+      end
+    end
+
+    context "delete" do
+      it "success: with a valid id" do
+        instance = Source.create!(attributes.merge("tenant" => tenant))
+
+        expect(Sources::Api::Events).to receive(:raise_event).once
+        delete(instance_path(instance.id), :headers => headers)
+
+        expect(response).to have_attributes(
+          :status => 204,
+          :parsed_body => ""
+        )
+      end
+
+      it "success: with associated applications" do
+        source_type = SourceType.create!(:name => "openshift", :vendor => "RedHat", :product_name => "OpenShift")
+        attributes  = { "name" => "my_source", "source_type_id" => source_type.id.to_s }
+        instance    = Source.create!(attributes.merge("tenant" => tenant))
+
+        app_type1 = ApplicationType.create(:name         => "/platform/application-type1",
+                                           :display_name => "Application Type One")
+
+        app_type2 = ApplicationType.create(:name         => "ApplicationType2",
+                                           :display_name => "Application Type Two")
+
+        app_type1_url = "http://app1.example.com:8001/availability_check"
+        app_type2_url = "http://app2.example.com:8002/availability_check"
+
+        app1 = Application.create(:application_type => app_type1, :source => instance, :tenant => tenant)
+        app2 = Application.create(:application_type => app_type2, :source => instance, :tenant => tenant)
+
+        tenant_payload = {
+          "host"                  => "example.com",
+          "port"                  => 443,
+          "role"                  => "default",
+          "path"                  => "api",
+          "source_id"             => instance.id.to_s,
+          "scheme"                => "https",
+          "verify_ssl"            => true,
+          "certificate_authority" => "-----BEGIN CERTIFICATE-----\nabcd\n-----END CERTIFICATE-----",
+        }
+
+        Endpoint.create!(tenant_payload.merge(:tenant => tenant, :source => instance))
+
+        expect(Sources::Api::Events).to receive(:raise_event).exactly(4).times
+        delete(instance_path(instance.id), :headers => headers)
+
+        expect(response).to have_attributes(
+          :status => 204,
+          :parsed_body => ""
+        )
+        expect(Application.count).to eq(0)
       end
     end
   end
@@ -371,7 +425,7 @@ RSpec.describe("v3.0 - Sources") do
 
         expect(response).to have_attributes(
           :status      => 404,
-          :parsed_body => {"errors"=>[{"detail" => "Record not found", "status" => 404}]}
+          :parsed_body => {"errors"=>[{"detail" => "Record not found", "status" => "404"}]}
         )
       end
 
@@ -538,7 +592,7 @@ RSpec.describe("v3.0 - Sources") do
 
             expect(response).to have_attributes(
               :status => 404,
-              :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+              :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
             )
           end
         end
