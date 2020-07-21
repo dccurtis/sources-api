@@ -1466,6 +1466,9 @@
           "source_id": {
             "$ref": "#/components/schemas/ID"
           },
+          "opaque": {
+            "type": "object"
+          },
           "updated_at": {
             "format": "date-time",
             "readOnly": true,
