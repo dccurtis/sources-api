@@ -73,7 +73,7 @@ amazon:
         :initializeOnMount: true
         :initialValue: aws
   :vendor: Amazon
-  :icon_url: "/apps/chrome/assets/images/partners-icons/aws.svg"
+  :icon_url: "/apps/frontend-assets/partners-icons/aws-long.svg"
 amazon-local:
   :product_name: Amazon Web Services Local
   :schema:
