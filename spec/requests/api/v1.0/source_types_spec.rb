@@ -19,51 +19,13 @@ RSpec.describe("v1.0 - SourceTypes") do
       end
 
       it "success: non-empty collection" do
-        SourceType.create!(attributes)
+        create(:source_type, attributes)
 
         get(collection_path, :headers => headers)
 
         expect(response).to have_attributes(
           :status => 200,
           :parsed_body => paginated_response(1, [a_hash_including(attributes)])
-        )
-      end
-    end
-
-    context "post" do
-      let(:client) { instance_double("ManageIQ::Messaging::Client") }
-      before do
-        allow(client).to receive(:publish_topic)
-        allow(Sources::Api::Messaging).to receive(:client).and_return(client)
-      end
-
-      it "success: with valid body" do
-        post(collection_path, :params => attributes.to_json, :headers => headers)
-
-        expect(response).to have_attributes(
-          :status => 201,
-          :location => "http://www.example.com/api/v1.0/source_types/#{response.parsed_body["id"]}",
-          :parsed_body => a_hash_including(attributes)
-        )
-      end
-
-      it "failure: with extra attributes" do
-        post(collection_path, :params => attributes.merge("aaa" => "bbb").to_json, :headers => headers)
-
-        expect(response).to have_attributes(
-          :status => 400,
-          :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/SourceType does not define properties: aaa").to_h
-        )
-      end
-
-      it "failure: with an invalid attribute value" do
-        post(collection_path, :params => attributes.merge("name" => 123).to_json, :headers => headers)
-
-        expect(response).to have_attributes(
-          :status      => 400,
-          :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::ValidateError: #/components/schemas/SourceType/properties/name expected string, but received Integer: 123").to_h
         )
       end
     end
@@ -76,7 +38,7 @@ RSpec.describe("v1.0 - SourceTypes") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = SourceType.create!(attributes)
+        instance = create(:source_type, attributes)
 
         get(instance_path(instance.id), :headers => headers)
 
@@ -87,7 +49,7 @@ RSpec.describe("v1.0 - SourceTypes") do
       end
 
       it "failure: with an invalid id" do
-        instance = SourceType.create!(attributes)
+        instance = create(:source_type, attributes)
 
         get(instance_path(instance.id * 1000), :headers => headers)
 
@@ -106,7 +68,7 @@ RSpec.describe("v1.0 - SourceTypes") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = SourceType.create!(attributes)
+        instance = create(:source_type, attributes)
 
         get(subcollection_path(instance.id, "sources"), :headers => headers)
 
@@ -117,7 +79,7 @@ RSpec.describe("v1.0 - SourceTypes") do
       end
 
       it "failure: with an invalid id" do
-        instance = SourceType.create!(attributes)
+        instance = create(:source_type, attributes)
         missing_id = (instance.id * 1000)
         expect(Source.exists?(missing_id)).to eq(false)
 
