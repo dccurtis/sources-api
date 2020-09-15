@@ -4,10 +4,9 @@ RSpec.describe("Sources Filtering") do
   let(:headers)           { {"CONTENT_TYPE" => "application/json", "x-rh-identity" => identity} }
   let(:api_version)       { "v3.0" }
   let(:source_collection) { "/api/#{api_version}/sources" }
-  let(:source_type)       { SourceType.create!(:name => "SampleSourceType", :vendor => "Sample Vendor", :product_name => "Sample Product Name") }
 
   def create_source(source_name, opt_params = {})
-    Source.create!({:name => source_name, :source_type_id => source_type.id, :tenant => tenant}.merge(opt_params))
+    create(:source, {:name => source_name}.merge(opt_params))
   end
 
   def expect_success(query, *results)
@@ -26,7 +25,7 @@ RSpec.describe("Sources Filtering") do
 
     expect(response).to(
       have_attributes(
-        :parsed_body => { "errors" => errors.collect { |e| {"detail" => e, "status" => 400} } },
+        :parsed_body => { "errors" => errors.collect { |e| {"detail" => e, "status" => "400"} } },
         :status      => 400,
       )
     )
@@ -55,8 +54,8 @@ RSpec.describe("Sources Filtering") do
 
   context "sorted results via sort_by" do
     before do
-      Source.create!(:name => "sort_by_source_a", :source_type => source_type, :tenant => tenant)
-      Source.create!(:name => "sort_by_source_b", :source_type => source_type, :tenant => tenant)
+      create(:source, :name => "sort_by_source_a")
+      create(:source, :name => "sort_by_source_b")
     end
 
     it "available for sources with default order" do
@@ -85,7 +84,7 @@ RSpec.describe("Sources Filtering") do
       get("#{source_collection}?filter[bogus_attribute]=a", :headers => headers)
 
       expect(response.status).to(eq(400))
-      expect(response.parsed_body["errors"]).to(eq([{"detail" => "found unpermitted parameter: bogus_attribute", "status" => 400}]))
+      expect(response.parsed_body["errors"]).to(eq([{"detail" => "found unpermitted parameter: bogus_attribute", "status" => "400"}]))
     end
   end
 end

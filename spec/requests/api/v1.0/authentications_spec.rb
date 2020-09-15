@@ -11,6 +11,8 @@ RSpec.describe("v1.0 - Authentications") do
 
   let(:headers)         { {"CONTENT_TYPE" => "application/json", "x-rh-identity" => identity} }
   let(:collection_path) { "/api/v1.0/authentications" }
+
+  # Payload for the API request
   let(:payload) do
     {
       "username"      => "test_name",
@@ -32,7 +34,7 @@ RSpec.describe("v1.0 - Authentications") do
       end
 
       it "success: non-empty collection" do
-        Authentication.create!(payload.merge(:tenant => tenant))
+        create(:authentication, payload)
 
         get(collection_path, :headers => headers)
 
@@ -73,7 +75,7 @@ RSpec.describe("v1.0 - Authentications") do
         expect(response).to have_attributes(
                               :status => 400,
                               :location => nil,
-                              :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Authentication/properties/extra does not define properties: amazon").to_h
+                              :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Authentication/properties/extra does not define properties: amazon").to_h
                             )
       end
 
@@ -83,7 +85,7 @@ RSpec.describe("v1.0 - Authentications") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Authentication does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Authentication does not define properties: aaa").to_h
         )
       end
 
@@ -93,7 +95,7 @@ RSpec.describe("v1.0 - Authentications") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::ValidateError: #/components/schemas/Authentication/properties/password expected string, but received Integer: 123").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::ValidateError: #/components/schemas/Authentication/properties/password expected string, but received Integer: 123").to_h
         )
       end
     end
@@ -106,7 +108,7 @@ RSpec.describe("v1.0 - Authentications") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = Authentication.create!(payload.merge(:tenant => tenant))
+        instance = create(:authentication, payload)
 
         get(instance_path(instance.id), :headers => headers)
 
@@ -117,19 +119,19 @@ RSpec.describe("v1.0 - Authentications") do
       end
 
       it "failure: with an invalid id" do
-        instance = Authentication.create!(payload.merge(:tenant => tenant))
+        instance = create(:authentication, payload)
 
         get(instance_path(instance.id * 1000), :headers => headers)
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
     end
 
     context "patch" do
-      let(:instance) { Authentication.create!(payload.merge(:tenant => tenant)) }
+      let(:instance) { create(:authentication, payload) }
       it "success: with a valid id" do
         new_attributes = {"name" => "new name"}
         patch(instance_path(instance.id), :params => new_attributes.to_json, :headers => headers)
@@ -158,7 +160,7 @@ RSpec.describe("v1.0 - Authentications") do
 
         expect(response).to have_attributes(
           :status      => 404,
-          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => 404}]}
+          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => "404"}]}
         )
       end
     end

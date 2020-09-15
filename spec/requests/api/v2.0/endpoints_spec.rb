@@ -11,8 +11,7 @@ RSpec.describe("v2.0 - Endpoints") do
 
   let(:headers)         { {"CONTENT_TYPE" => "application/json", "x-rh-identity" => identity} }
   let(:collection_path) { "/api/v2.0/endpoints" }
-  let(:source)          { Source.create!(:source_type => source_type, :tenant => tenant, :uid => SecureRandom.uuid, :name => "test_source") }
-  let(:source_type)     { SourceType.create!(:name => "openshift", :product_name => "OpenShift", :vendor => "Red Hat") }
+  let(:source)          { create(:source, :tenant => tenant) }
 
   let(:payload) do
     {
@@ -39,7 +38,7 @@ RSpec.describe("v2.0 - Endpoints") do
       end
 
       it "success: non-empty collection" do
-        Endpoint.create!(payload.merge(:tenant => tenant))
+        create(:endpoint, payload.merge(:tenant => tenant))
 
         get(collection_path, :headers => headers)
 
@@ -68,7 +67,7 @@ RSpec.describe("v2.0 - Endpoints") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Endpoint does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Endpoint does not define properties: aaa").to_h
         )
       end
 
@@ -78,7 +77,7 @@ RSpec.describe("v2.0 - Endpoints") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::ValidateError: #/components/schemas/Endpoint/properties/default expected boolean, but received Integer: 123").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::ValidateError: #/components/schemas/Endpoint/properties/default expected boolean, but received Integer: 123").to_h
         )
       end
     end
@@ -91,7 +90,7 @@ RSpec.describe("v2.0 - Endpoints") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = Endpoint.create!(payload.merge(:tenant => tenant))
+        instance = create(:endpoint, payload.merge(:tenant => tenant))
 
         get(instance_path(instance.id), :headers => headers)
 
@@ -102,19 +101,19 @@ RSpec.describe("v2.0 - Endpoints") do
       end
 
       it "failure: with an invalid id" do
-        instance = Endpoint.create!(payload.merge(:tenant => tenant))
+        instance = create(:endpoint, payload.merge(:tenant => tenant))
 
         get(instance_path(instance.id * 1000), :headers => headers)
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
     end
 
     context "patch" do
-      let(:instance) { Endpoint.create!(payload.merge(:tenant => tenant)) }
+      let(:instance) { create(:endpoint, payload.merge(:tenant => tenant)) }
       it "success: with a valid id" do
         new_attributes = {"host" => "example.org"}
         patch(instance_path(instance.id), :params => new_attributes.to_json, :headers => headers)
@@ -135,7 +134,7 @@ RSpec.describe("v2.0 - Endpoints") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Endpoint does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Endpoint does not define properties: aaa").to_h
         )
       end
 
@@ -146,7 +145,7 @@ RSpec.describe("v2.0 - Endpoints") do
 
         expect(response).to have_attributes(
           :status      => 404,
-          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => 404}]}
+          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => "404"}]}
         )
       end
     end

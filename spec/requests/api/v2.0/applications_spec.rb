@@ -9,9 +9,8 @@ RSpec.describe("v2.0 - Applications") do
 
   let(:headers)          { {"CONTENT_TYPE" => "application/json", "x-rh-identity" => identity} }
   let(:collection_path)  { "/api/v2.0/applications" }
-  let(:source)           { Source.create!(:source_type => source_type, :tenant => tenant, :uid => SecureRandom.uuid, :name => "my-source") }
-  let(:source_type)      { SourceType.create!(:name => "my-source-type", :product_name => "My Source Type", :vendor => "ACME") }
-  let(:application_type) { ApplicationType.create!("name" => "my-application") }
+  let(:source)           { create(:source, :tenant => tenant, :uid => SecureRandom.uuid) }
+  let(:application_type) { create(:application_type) }
   let(:payload) do
     {
       "source_id" => source.id.to_s,
@@ -31,7 +30,7 @@ RSpec.describe("v2.0 - Applications") do
       end
 
       it "success: non-empty collection" do
-        Application.create!(payload.merge(:tenant => tenant))
+        create(:application, payload.merge(:tenant => tenant))
 
         get(collection_path, :headers => headers)
 
@@ -60,7 +59,7 @@ RSpec.describe("v2.0 - Applications") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Application does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Application does not define properties: aaa").to_h
         )
       end
 
@@ -70,7 +69,7 @@ RSpec.describe("v2.0 - Applications") do
         expect(response).to have_attributes(
           :status      => 400,
           :location    => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::ValidateError: #/components/schemas/Application/properties/availability_status expected string, but received Integer: 123").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::ValidateError: #/components/schemas/Application/properties/availability_status expected string, but received Integer: 123").to_h
         )
       end
     end
@@ -83,7 +82,7 @@ RSpec.describe("v2.0 - Applications") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = Application.create!(payload.merge(:tenant => tenant))
+        instance = create(:application, payload.merge(:tenant => tenant))
 
         get(instance_path(instance.id), :headers => headers)
 
@@ -94,19 +93,19 @@ RSpec.describe("v2.0 - Applications") do
       end
 
       it "failure: with an invalid id" do
-        instance = Application.create!(payload.merge(:tenant => tenant))
+        instance = create(:application, payload.merge(:tenant => tenant))
 
         get(instance_path(instance.id * 1000), :headers => headers)
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
     end
 
     context "patch" do
-      let(:instance) { Application.create!(payload.merge(:tenant => tenant)) }
+      let(:instance) { create(:application, payload.merge(:tenant => tenant)) }
       it "success: with a valid id" do
         new_attributes = {"availability_status" => "available"}
         patch(instance_path(instance.id), :params => new_attributes.to_json, :headers => headers)
@@ -127,7 +126,7 @@ RSpec.describe("v2.0 - Applications") do
         expect(response).to have_attributes(
           :status => 400,
           :location => nil,
-          :parsed_body => Insights::API::Common::ErrorDocument.new.add(400, "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Application does not define properties: aaa").to_h
+          :parsed_body => Insights::API::Common::ErrorDocument.new.add("400", "OpenAPIParser::NotExistPropertyDefinition: #/components/schemas/Application does not define properties: aaa").to_h
         )
       end
 
@@ -138,7 +137,7 @@ RSpec.describe("v2.0 - Applications") do
 
         expect(response).to have_attributes(
           :status      => 404,
-          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => 404}]}
+          :parsed_body => {"errors" => [{"detail" => "Record not found", "status" => "404"}]}
         )
       end
     end
@@ -151,7 +150,7 @@ RSpec.describe("v2.0 - Applications") do
 
     context "get" do
       it "success: with a valid id" do
-        instance = Application.create!(payload.merge(:tenant => tenant))
+        instance = create(:application, payload.merge(:tenant => tenant))
 
         get(subcollection_path(instance.id, "authentications"), :headers => headers)
 
@@ -162,7 +161,7 @@ RSpec.describe("v2.0 - Applications") do
       end
 
       it "failure: with an invalid id" do
-        instance = Application.create!(payload.merge(:tenant => tenant))
+        instance = create(:application, payload.merge(:tenant => tenant))
         missing_id = (instance.id * 1000)
         expect(Application.exists?(missing_id)).to eq(false)
 
@@ -170,7 +169,7 @@ RSpec.describe("v2.0 - Applications") do
 
         expect(response).to have_attributes(
           :status => 404,
-          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>404}]}
+          :parsed_body => {"errors"=>[{"detail"=>"Record not found", "status"=>"404"}]}
         )
       end
     end

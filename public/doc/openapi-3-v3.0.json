@@ -23,7 +23,7 @@
     "/application_authentications": {
       "get": {
         "summary": "List ApplicationAuthentications",
-        "operationId": "listApplicationAuthentications",
+        "operationId": "listAllApplicationAuthentications",
         "description": "Returns an array of ApplicationAuthentication objects",
         "parameters": [
           {
@@ -1455,6 +1455,14 @@
           "id": {
             "$ref": "#/components/schemas/ID"
           },
+          "last_available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
+            "type": "string"
+          },
           "source_id": {
             "$ref": "#/components/schemas/ID"
           },
@@ -1581,7 +1589,8 @@
         "properties": {
           "authtype": {
             "example": "openshift_default",
-            "type": "string"
+            "type": "string",
+            "readOnly": true
           },
           "availability_status": {
             "type": "string"
@@ -1606,6 +1615,14 @@
           },
           "id": {
             "$ref": "#/components/schemas/ID"
+          },
+          "last_available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
+            "type": "string"
           },
           "name": {
             "example": "OpenShift default",
@@ -1712,6 +1729,14 @@
           "id": {
             "$ref": "#/components/schemas/ID"
           },
+          "last_available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
+            "type": "string"
+          },
           "path": {
             "description": "URI path component",
             "example": "/api/v1",
@@ -1777,8 +1802,8 @@
               "type": "object",
               "properties": {
                 "status": {
-                  "type": "integer",
-                  "example": 404
+                  "type": "string",
+                  "example": "404"
                 },
                 "detail": {
                   "type": "string",
@@ -1849,6 +1874,14 @@
             "$ref": "#/components/schemas/ID"
           },
           "imported": {
+            "type": "string"
+          },
+          "last_available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
             "type": "string"
           },
           "name": {
