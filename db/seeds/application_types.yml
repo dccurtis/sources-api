@@ -15,6 +15,7 @@
   - amazon
   - azure
   - openshift
+  - google
   :supported_authentication_types:
     amazon:
     - arn
@@ -22,6 +23,8 @@
     - tenant_id_client_id_client_secret
     openshift:
     - token
+    google:
+    - project_id_dataset_table_id
 "/insights/platform/cloud-meter":
   :display_name: Subscription Watch
   :dependent_applications: []
