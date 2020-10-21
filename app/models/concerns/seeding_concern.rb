@@ -12,6 +12,7 @@ module SeedingConcern
         records = all.index_by(&seed_key)
 
         seeds.each do |key, attributes|
+          next if Rails.env == "production" && key.end_with?("-local")
           if (r = records.delete(key))
             logger.info("Updating #{key}")
             r.update!(attributes)
