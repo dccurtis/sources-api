@@ -24,7 +24,7 @@
     openshift:
     - token
     google:
-    - project_id_dataset_table_id
+    - project_id
 "/insights/platform/cloud-meter":
   :display_name: Subscription Watch
   :dependent_applications: []

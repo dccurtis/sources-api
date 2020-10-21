@@ -249,18 +249,28 @@ google:
   :product_name: Google Cloud Platform
   :schema:
     :authentication:
-    - :type: project_id_dataset_table_id
+    - :type: project_id
       :name: Project ID, Dataset, Table ID
       :fields:
       - :component: text-field
         :name: authentication.authtype
         :hideField: true
         :initializeOnMount: true
-        :initialValue: project_id_dataset_table_id
+        :initialValue: project_id
       - :component: text-field
         :name: authentication.password
         :label: Project ID, Dataset, Table ID
         :type: password
+        :isRequired: true
+      - :name: billing_source.data_source.dataset
+        :stepKey: cost-management
+        :component: text-field
+        :label: Dataset name
+        :isRequired: true
+      - :name: billing_source.data_source.tableid
+        :stepKey: cost-management
+        :component: text-field
+        :label: Table ID name
         :isRequired: true
     :endpoint:
       :hidden: true
