@@ -250,7 +250,7 @@ google:
   :schema:
     :authentication:
     - :type: project_id
-      :name: Project ID, Dataset, Table ID
+      :name: Project ID
       :fields:
       - :component: text-field
         :name: authentication.authtype
@@ -259,7 +259,7 @@ google:
         :initialValue: project_id
       - :component: text-field
         :name: authentication.password
-        :label: Project ID, Dataset, Table ID
+        :label: Project ID
         :type: password
         :isRequired: true
       - :name: billing_source.data_source.dataset
@@ -271,7 +271,7 @@ google:
         :stepKey: cost-management
         :component: text-field
         :label: Table ID name
-        :isRequired: true
+        :isRequired: false
     :endpoint:
       :hidden: true
       :fields:
