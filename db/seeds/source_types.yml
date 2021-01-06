@@ -262,16 +262,11 @@ google:
         :label: Project ID
         :type: password
         :isRequired: true
-      - :name: billing_source.data_source.dataset
+      - :name: application.extra.dataset
         :stepKey: cost-management
         :component: text-field
         :label: Dataset name
         :isRequired: true
-      - :name: billing_source.data_source.tableid
-        :stepKey: cost-management
-        :component: text-field
-        :label: Table ID name
-        :isRequired: false
     :endpoint:
       :hidden: true
       :fields:
