@@ -12,7 +12,8 @@ module Api
       def create
         source_data = params_for_create
         source_data["uid"] = SecureRandom.uuid if source_data["uid"].nil?
-        source = Source.create!(source_data)
+        source = Source.new(source_data).tap { |src| authorize(src) }
+        source.save!
 
         raise_event("#{model}.create", source.as_json)
 
@@ -25,7 +26,7 @@ module Api
 
         logger.info("Initiating Source#availability_check [#{{"source_id" => source.id, "topic" => topic}}]")
 
-        if Sources::Api::Messaging.topics.include?(topic)
+        begin
           logger.debug("Publishing message for Source#availability_check [#{{"source_id" => source.id, "topic" => topic}}]")
 
           Sources::Api::Messaging.client.publish_topic(
@@ -42,8 +43,8 @@ module Api
           )
 
           logger.debug("Publishing message for Source#availability_check [#{{"source_id" => source.id, "topic" => topic}}]...Complete")
-        else
-          logger.error("Not publishing message to non-existing topic: Source#availability_check [#{{"source_id" => source.id, "topic" => topic}}]")
+        rescue e
+          logger.error("Hit error attempting to publish [#{{"source_id" => source.id, "topic" => topic}}] during Source#availability_check: #{e.message}")
         end
 
         check_application_availability(source)
