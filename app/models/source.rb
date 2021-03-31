@@ -1,4 +1,6 @@
 class Source < ApplicationRecord
+  SUPERKEY_WORKFLOW = "account_authorization".freeze
+
   include TenancyConcern
   include EventConcern
   include AvailabilityStatusConcern
@@ -11,6 +13,7 @@ class Source < ApplicationRecord
 
   attribute :availability_status, :string
   validates :availability_status, :inclusion => { :in => %w[available partially_available unavailable] }, :allow_nil => true
+  validates :app_creation_workflow, :inclusion => {:in => %w[manual_configuration account_authorization]}
 
   belongs_to :source_type
 
@@ -22,5 +25,26 @@ class Source < ApplicationRecord
   def default_endpoint
     default = endpoints.detect(&:default)
     default || endpoints.build(:default => true, :tenant => tenant)
+  end
+
+  def super_key?
+    app_creation_workflow == SUPERKEY_WORKFLOW
+  end
+
+  # finds the superkey authentication tied to the Source
+  def super_key_credential
+    authentications.detect { |a| a.authtype == source_type.superkey_authtype }
+  end
+
+  def remove_availability_status(source = nil)
+    return if source == :Application && endpoints.any?
+
+    self.availability_status = nil
+    self.last_checked_at = nil
+  end
+
+  def remove_availability_status!(source = nil)
+    remove_availability_status(source)
+    save!
   end
 end

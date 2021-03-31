@@ -2,7 +2,6 @@ class Authentication < ApplicationRecord
   include PasswordConcern
   include TenancyConcern
   include EventConcern
-  include AvailabilityStatusConcern
   encrypt_column :password
 
   belongs_to :resource, :polymorphic => true
@@ -15,10 +14,24 @@ class Authentication < ApplicationRecord
   validates :availability_status, :inclusion => { :in => %w[available unavailable] }, :allow_nil => true
 
   before_validation :set_source
+  validate :only_one_superkey, :if => proc { new_record? && source.super_key? }
 
   private
 
   def set_source
-    self.source_id = resource&.source_id
+    self.source_id = if resource.instance_of?(Source)
+                       resource_id
+                     else
+                       resource.try(:source_id)
+                     end
+  end
+
+  def only_one_superkey
+    superkey_authtype = source.source_type.superkey_authtype
+    return unless superkey_authtype && authtype == superkey_authtype
+
+    if source.authentications.any? { |auth| auth.authtype == superkey_authtype }
+      errors.add(:only_one_superkey, "Only one Authentication of #{superkey_authtype} is allowed on the Source.")
+    end
   end
 end
