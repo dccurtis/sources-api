@@ -19,6 +19,8 @@ RSpec.describe("Application") do
 
     context "#with changes" do
       it "resets availability status for related source" do
+        expect(record.source).to receive(:availability_check)
+
         record.update!(update)
 
         expect(record.source.availability_status).to eq(nil)
@@ -28,6 +30,8 @@ RSpec.describe("Application") do
 
     context "#without changes" do
       it "does not reset availability status for related source" do
+        expect(record.source).not_to receive(:availability_check)
+
         record.update!(no_update)
 
         expect(record.source.availability_status).to eq(available_status)
@@ -56,6 +60,62 @@ RSpec.describe("Application") do
         expect do
           subject
         end.to raise_error(ActiveRecord::RecordInvalid, /^.* is not compatible with this application type/)
+      end
+    end
+  end
+
+  describe "superkey" do
+    let!(:source) { create(:source, :app_creation_workflow => "account_authorization") }
+    let!(:apptype) { create(:application_type, :supported_source_types => [source.source_type.name]) }
+    let!(:sk) { instance_double(Sources::SuperKey) }
+
+    let(:client) { instance_double("ManageIQ::Messaging::Client") }
+
+    before do
+      allow(client).to receive(:publish_topic)
+      allow(Sources::Api::Messaging).to receive(:client).and_return(client)
+
+      allow(Sources::SuperKey).to receive(:new).and_return(sk)
+    end
+
+    context "on create" do
+      context "when there is a superkey authentication" do
+        it "runs the superkey workflow" do
+          _auth = Authentication.create!(:resource => source, :tenant => source.tenant, :username => "foo", :password => "bar")
+          expect(sk).to receive(:create).once
+
+          Application.create!(:source => source, :tenant => Tenant.first, :application_type_id => apptype.id)
+        end
+      end
+
+      context "when there is not a superkey authentication" do
+        it "does not run the superkey workflow" do
+          expect(sk).not_to receive(:create)
+
+          Application.create!(:source => source, :tenant => Tenant.first, :application_type_id => apptype.id)
+        end
+      end
+    end
+
+    context "on destroy" do
+      let!(:application) { create(:application, :application_type => apptype, :source => source) }
+
+      context "when there is a superkey authentication" do
+        it "runs the superkey workflow" do
+          _auth = Authentication.create!(:resource => source, :tenant => source.tenant, :username => "foo", :password => "bar")
+          source.reload
+          expect(sk).to receive(:teardown).once
+
+          application.destroy!
+        end
+      end
+
+      context "when there is not a superkey authentication" do
+        it "does not run the superkey workflow" do
+          expect(sk).not_to receive(:teardown)
+
+          application.destroy!
+        end
       end
     end
   end
